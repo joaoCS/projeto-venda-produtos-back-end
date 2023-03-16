@@ -21,6 +21,18 @@ router.post('/create', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/', async (req, res)=>{
+    
+    try {
 
+        const clientes = await ClienteModel.find({}); // retorna todos os clientes
+
+        return res.json(clientes);
+
+    } catch (error) {
+        res.status(500);
+        return res.json(error);
+    }
+});
 
 export { router as clienteRouter }
