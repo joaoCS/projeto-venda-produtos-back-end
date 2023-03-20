@@ -1,12 +1,11 @@
 import express from 'express';
 import { ListaVendaModel } from '../models/ListaVenda.js';
 import { VendaModel } from '../models/Venda.js';
+import { verifyToken } from './users.js';
 
 const router = express.Router();
 
-
-
-router.post('/efetuarVenda', async (req, res) => {
+router.post('/efetuarVenda', verifyToken, async (req, res) => {
     try {
         const { cliente, totalPagar, venda } = req.body;
 
