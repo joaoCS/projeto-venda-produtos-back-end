@@ -49,5 +49,26 @@ router.get('/', verifyToken, async (req, res) => {
 
 });
 
+router.put("/edit", verifyToken, async (req, res) => {
+
+    try{
+        const { _id, nome, valorCompra, valorVenda, categoria } = req.body;
+        
+        const produto = await ProdutoModel.findById(_id);
+        
+        produto.nome = nome;
+        produto.valorCompra = valorCompra;
+        produto.valorVenda = valorVenda;
+        produto.categoria = categoria;
+
+        produto.save();
+
+        res.json({ message: "Produto alterado com sucesso!" });
+    }
+    catch(err) {
+        res.status(500);
+        res.json({ message: "Erro ao salvar produto!" });
+    }
+});
 
 export { router as produtoRouter }
