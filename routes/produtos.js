@@ -71,4 +71,28 @@ router.put("/edit", verifyToken, async (req, res) => {
     }
 });
 
+router.delete('/delete', verifyToken, async (req, res) => {
+    const { _id } = req.body.produto;
+
+
+    if (!_id) {
+        res.status(500);
+        return res.json({ message: "Falta fornecer o _id do produto!" });
+        
+    }
+
+    try {
+        await ProdutoModel.deleteOne({ _id });
+        res.json({message: "Produto removido com sucesso!"});
+        return res.end();
+    } 
+    catch (err) {
+        res.status(500);
+        res.json({ message: "Erro ao excluir produto!" });
+    }
+
+});
+
+
+
 export { router as produtoRouter }
