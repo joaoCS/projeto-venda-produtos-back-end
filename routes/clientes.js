@@ -56,7 +56,8 @@ router.put('/edit', verifyToken, async (req, res) => {
         res.json({message: "Cliente alterado com sucesso!"});
     } 
     catch (err) {
-        
+        res.status(500);
+        res.json({ message: "Erro ao editar cliente!" });
     }
 });
 

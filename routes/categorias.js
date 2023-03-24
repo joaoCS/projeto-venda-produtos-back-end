@@ -15,7 +15,7 @@ router.get('/', async (req, res)=>{
 
     } catch (error) {
         res.status(500);
-        return res.json(error);
+        return res.json({message: "Erro ao buscar categorias", error});
     }
 });
 
@@ -53,5 +53,52 @@ router.post('/create', verifyToken, async (req, res) => {
         return res.json({ message: "Erro ao criar categoria!", err });
     }
 });
+
+
+router.put('/edit', verifyToken, async (req, res) => {
+    const { _id, nome } = req.body;
+
+    let categoria = await CategoriaModel.findOne({_id});
+
+    if(!categoria){
+        res.status(500);
+        return res.json({message: "Categoria não existe!"});
+    }
+
+    try {
+        categoria.nome = nome;
+       
+
+        await categoria.save();
+
+        res.json({message: "Categoria alterada com sucesso!"});
+    } 
+    catch (err) {
+        res.status(500);
+        res.json({ message: "Erro ao editar categoria!" });
+    }
+});
+
+
+
+router.delete('/delete', verifyToken, async (req, res) => {
+    const { _id } = req.body.categoria;
+
+    if (!_id) {
+
+        res.status(500);
+        return res.json({message: "Id da categoria não fornecido!"});
+    }
+
+    try {
+        await CategoriaModel.deleteOne({_id});
+        res.json({message: "Categoria removida com sucesso!"});
+    } 
+    catch (err) {
+        res.status(500);
+        return res.json({message: "Erro ao remover categoria!", err});
+    }
+});
+
 
 export { router as categoriaRouter }
