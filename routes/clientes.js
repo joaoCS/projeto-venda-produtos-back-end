@@ -15,8 +15,8 @@ router.post('/create', verifyToken, async (req, res) => {
 
     }
     catch(err) {
-
-        return res.json({message: "Cliente cadastrado com sucesso!"});
+        res.status(500);
+        return res.json({message: "Erro ao cadastrar cliente!"});
 
     }
 });

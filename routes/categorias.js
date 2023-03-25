@@ -50,6 +50,7 @@ router.post('/create', verifyToken, async (req, res) => {
 
     }
     catch (err) {
+        res.status(500);
         return res.json({ message: "Erro ao criar categoria!", err });
     }
 });
