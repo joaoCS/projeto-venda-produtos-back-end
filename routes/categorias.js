@@ -41,6 +41,11 @@ router.get('/busca/:categoriaId', async (req, res)=>{
 
 router.post('/create', verifyToken, async (req, res) => {
 
+    const categ = await CategoriaModel.findOne({ nome: req.body.nome });
+
+    if(categ) 
+        return res.status(500).json({ message: "Categoria já cadastrada!" });
+    
     try {
         const categoria = new CategoriaModel(req.body);
 

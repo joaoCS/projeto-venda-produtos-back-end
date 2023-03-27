@@ -23,7 +23,6 @@ router.post('/efetuarVenda', verifyToken, async (req, res) => {
 
         const listaVendaModel = new ListaVendaModel({  produtos, cliente: cliente._id, totalPagar });
         
-        console.log(produtos);
         await listaVendaModel.save();
 
        return res.json({message: "Venda efetuada com sucesso!"});
