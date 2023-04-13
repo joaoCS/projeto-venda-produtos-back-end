@@ -6,10 +6,21 @@ import { verifyToken } from './users.js';
 const router = express.Router();
 
 router.post('/create', verifyToken, async (req, res) => {
+    
+    const produto = new ProdutoModel(req.body);
+
+    if (produto.valorCompra === null || produto.valorVenda === null) {
+        res.status(500);
+        return res.json({message: "Valor de compra ou venda inválido(s)!"});        
+    }
+
+    if (produto.categoria === undefined) {
+        res.status(500);
+        return res.json({message: "Categoria não fornecida!"});        
+    }
 
     try {
-        const produto = new ProdutoModel(req.body);
-
+        
         await produto.save();
 
         return res.json({message: "Produto cadastrado com sucesso!"});
