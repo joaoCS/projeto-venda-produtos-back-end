@@ -1,3 +1,7 @@
+
+// projeto hospedado em: projeto-venda-produtos-back-end-production.up.railway.app
+
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';

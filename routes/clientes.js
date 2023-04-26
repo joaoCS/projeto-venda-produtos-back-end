@@ -80,4 +80,4 @@ router.delete('/delete', verifyToken, async (req, res) => {
     }
 });
 
-export { router as clienteRouter }
+export { router as clienteRouter };

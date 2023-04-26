@@ -1,11 +1,16 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt, { verify } from 'jsonwebtoken';
+import dotenv from "dotenv";
 
 
 const router = express.Router();
 
 import { UserModel } from '../models/Users.js';
+
+dotenv.config();
+
+const JWT_SECRET = process.env.SECRET;
 
 export const verifyToken = (req, res, next) => {
     const token = req.headers.authorization;
@@ -23,7 +28,7 @@ export const verifyToken = (req, res, next) => {
         res.sendStatus(401);
 };
 
-router.post('/createAdmin', async (req, res)=>{
+router.post('/createAdmin', async (req, res)=> {
     
     const { username, email, password } = req.body;
 
@@ -118,6 +123,28 @@ router.put('/edit', verifyToken, async (req, res) => {
     catch (err) {
         res.status(500);
         return res.json({message: "Erro ao atualizar dados de usuário!"});
+    }
+});
+
+router.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    try{
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            res.status(500);
+            return res.json({ message: "Email não cadastrado!" });
+        }
+
+        const secret = JWT_SECRET + user.password;
+        const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "5m" });
+
+        const link = `localhost:3001/reset-password/${user._id}/${token}`;
+
+        console.log(link);
+        res.end();
+    }
+    catch(err) {
+        res.json({ message: "Algo deu errado!" });
     }
 });
 
