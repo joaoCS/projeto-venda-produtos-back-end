@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt, { verify } from 'jsonwebtoken';
 import dotenv from "dotenv";
-
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
@@ -138,7 +138,26 @@ router.post("/forgot-password", async (req, res) => {
         const secret = JWT_SECRET + user.password;
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "5m" });
 
-        const link = `localhost:3001/reset-password/${user._id}/${token}`;
+        const link = `http://localhost:3001/auth/reset-password/${user._id}/${token}`;
+
+        
+        
+        var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "sistemavendasnoreply@gmail.com",
+                pass: process.env.APP_KEY
+            }
+        });
+        
+        var mailOptions = {
+            from: "sistemavendasnoreply@gmail.com",
+            to: email,
+            subject: "Redefinição de senha",
+            text: link
+        };
+
+        const response = await transporter.sendMail(mailOptions);
 
         console.log(link);
         res.end();
@@ -146,6 +165,73 @@ router.post("/forgot-password", async (req, res) => {
     catch(err) {
         res.json({ message: "Algo deu errado!" });
     }
+});
+
+
+router.get("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    
+    const user = await UserModel.findOne({ _id: id });
+    if (!user) {
+        res.status(500);
+        return res.json({ message: "Usuário não cadastrado!" });
+    }
+
+    const secret = JWT_SECRET + user.password;
+
+    try{
+
+        const verify = jwt.verify(token, secret);
+        
+        res.render("index", { email: verify.email });
+    
+    }
+    catch(err) {
+        res.status(500);
+        return res.json({ message: "Não verificado" });
+    }
+    
+    
+});
+
+router.post("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    const user = await UserModel.findOne({ _id: id });
+    if (!user) {
+        res.status(500);
+        return res.json({ message: "Usuário não cadastrado!" });
+    }
+
+    const secret = JWT_SECRET + user.password;
+
+    try{
+
+        const verify = jwt.verify(token, secret);
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        await UserModel.updateOne(
+            {
+                _id: id,
+            },
+            {
+                $set: {
+                    password: hashedPassword
+                }
+            }
+        );
+
+        res.json({ message: "Senha atualizada com sucesso!" });
+    
+    }
+    catch(err) {
+        res.status(500);
+        return res.json({ message: "Algo deu errado!" });
+    }
+    
+    
 });
 
 export {router as userRouter};
