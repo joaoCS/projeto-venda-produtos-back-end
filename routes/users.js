@@ -11,12 +11,14 @@ import { UserModel } from '../models/Users.js';
 dotenv.config();
 
 const JWT_SECRET = process.env.SECRET;
+const host = process.env.HOST;
+const port = process.env.PORT;
 
 export const verifyToken = (req, res, next) => {
     const token = req.headers.authorization;
 
     if (token){
-        jwt.verify(token, "secret", (err) => {
+        jwt.verify(token, JWT_SECRET, (err) => {
             if (err) {// token inválido
                 res.sendStatus(403); 
                 next();
@@ -65,7 +67,9 @@ router.post('/login', async (req, res) => {
         return res.json({message: "Senha incorreta!"});
     }
     
-    const token = jwt.sign({ id: user._id }, "secret");
+
+
+    const token = jwt.sign({ id: user._id }, JWT_SECRET);
 
     return res.json({ token, userId: user._id, username: user.username });
 });
@@ -138,7 +142,7 @@ router.post("/forgot-password", async (req, res) => {
         const secret = JWT_SECRET + user.password;
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "5m" });
 
-        const link = `http://localhost:3001/auth/reset-password/${user._id}/${token}`;
+        const link = `${host}/auth/reset-password/${user._id}/${token}`;
 
         
         
@@ -159,7 +163,6 @@ router.post("/forgot-password", async (req, res) => {
 
         const response = await transporter.sendMail(mailOptions);
 
-        console.log(link);
         res.end();
     }
     catch(err) {
