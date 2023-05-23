@@ -12,7 +12,6 @@ dotenv.config();
 
 const JWT_SECRET = process.env.SECRET;
 const host = process.env.HOST;
-const port = process.env.PORT;
 
 export const verifyToken = (req, res, next) => {
     const token = req.headers.authorization;
@@ -79,7 +78,7 @@ router.get('/username', verifyToken, async (req, res) => {
     try {
         const user = await UserModel.findById(req.headers.userid);
         
-        res.json({ username: user.username });
+        return res.json({ username: user.username });
     } 
     catch (err) {
         res.status(500);
@@ -138,12 +137,11 @@ router.post("/forgot-password", async (req, res) => {
             res.status(500);
             return res.json({ message: "Email não cadastrado!" });
         }
-
         const secret = JWT_SECRET + user.password;
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "5m" });
-
+        
         const link = `${host}/auth/reset-password/${user._id}/${token}`;
-
+        
         
         
         var transporter = nodemailer.createTransport({
@@ -153,20 +151,20 @@ router.post("/forgot-password", async (req, res) => {
                 pass: process.env.APP_KEY
             }
         });
-        
         var mailOptions = {
             from: "sistemavendasnoreply@gmail.com",
             to: email,
             subject: "Redefinição de senha",
             text: link
         };
-
+        
         const response = await transporter.sendMail(mailOptions);
-
-        res.end();
+        
+        return res.json({ message: "O link de redefinição de senha foi enviado para seu email. Verifique-o!" });
     }
     catch(err) {
-        res.json({ message: "Algo deu errado!" });
+        console.log(err);
+       return res.json({ message: "Algo deu errado!" });
     }
 });
 
