@@ -184,12 +184,12 @@ router.get("/reset-password/:id/:token", async (req, res) => {
 
         const verify = jwt.verify(token, secret);
         
-        res.render("index", { email: verify.email });
+       return res.render("index", { email: verify.email });
     
     }
     catch(err) {
         res.status(500);
-        return res.json({ message: "Não verificado" });
+        res.render("notVerified");
     }
     
     
@@ -224,12 +224,12 @@ router.post("/reset-password/:id/:token", async (req, res) => {
             }
         );
 
-        res.json({ message: "Senha atualizada com sucesso!" });
+        res.render("confirmPasswordReset", { email: verify.email });
     
     }
     catch(err) {
         res.status(500);
-        return res.json({ message: "Algo deu errado!" });
+        return res.render("errorPasswordReset");
     }
     
     

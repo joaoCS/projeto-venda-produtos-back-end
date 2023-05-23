@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Vendas</title>
     <style>
-        .passwordReset {
+        body{
+            font-family: sans-serif;
+        }
+        .error-password-reset {
             position: absolute;
             top: 0;
             bottom: 0;
@@ -15,23 +18,16 @@
 
             width: fit-content;
             height: fit-content;
+
             margin: auto;
+            padding: 10px;
+
+            
         }
 
-        .passwordReset form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .passwordReset form input {
-            height: 25px;
-            font-size: 17px;
-        }
-        .passwordReset form input[type=submit] {
-            height: 30px;
-        }
-        .passwordReset form label {
-            font-size: 20px;
+        .error-password-reset a {
+            color: black;
+            font-weight: bold;
         }
         #bar{
             width: auto;
@@ -49,16 +45,12 @@
 </head>
 <body>
     <div id="bar">
-        Vendas
+      Vendas
     </div>
-    <div class="passwordReset">
-
-        <h1><%= email %></h1>
-        <form action="" method="POST">
-            <label for="password">Nova senha:</label><br/>
-            <input name="password" id="password" type="password" placeholder="Insira a nova senha"/><br/>
-            <input type="submit" value="Enviar"/>
-        </form>
+    <div class="error-password-reset">
+        
+        <h2>Não verificado!</h2>
+        <a href="http://localhost:3000">Home</a>
     </div>
 </body>
 </html>
