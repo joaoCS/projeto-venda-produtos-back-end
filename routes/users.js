@@ -142,8 +142,6 @@ router.post("/forgot-password", async (req, res) => {
         
         const link = `${host}/auth/reset-password/${user._id}/${token}`;
         
-        
-        
         var transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -191,8 +189,6 @@ router.get("/reset-password/:id/:token", async (req, res) => {
         res.status(500);
         res.render("notVerified");
     }
-    
-    
 });
 
 router.post("/reset-password/:id/:token", async (req, res) => {
